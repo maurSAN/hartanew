@@ -1,60 +1,54 @@
 body {
-  font-family: Arial, sans‑serif;
-  margin: 20px;
+  font-family: Arial, sans-serif;
+  background: #f9f9f9;
+  margin: 0;
+  padding: 20px;
 }
+
 h1 {
   text-align: center;
 }
-#mapContainer {
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-}
-.county {
-  fill: #ddd;
+
+#romaniaMap svg path {
+  fill: #cfcfcf;
   stroke: #333;
   stroke-width: 0.5;
   cursor: pointer;
   transition: fill 0.3s;
 }
-.county:hover {
-  fill: #aaf;
+
+#romaniaMap svg path:hover {
+  fill: #4faaf5;
 }
+
 #popup {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 #popup.hidden {
   display: none;
 }
+
 #popupContent {
   background: white;
   padding: 20px;
-  max-width: 500px;
-  width: 90%;
   border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
   position: relative;
 }
+
 #closePopup {
   position: absolute;
-  top: 10px;
   right: 10px;
-  background: transparent;
-  border: none;
+  top: 10px;
   font-size: 20px;
+  background: none;
+  border: none;
   cursor: pointer;
-}
-#propertiesList ul {
-  list-style: none;
-  padding: 0;
-}
-#propertiesList li {
-  margin: 5px 0;
-  padding: 5px;
-  background: #f4f4f4;
-  border-radius: 4px;
 }
