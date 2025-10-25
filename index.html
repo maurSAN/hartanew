@@ -2,41 +2,115 @@
 <html lang="ro">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Harta Beta – Proprietăți pe județe</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Harta Beta</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #f8f9fa;
+      font-family: Arial, sans-serif;
+    }
+    .map-container {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    svg {
+      width: 90%;
+      height: auto;
+      cursor: grab;
+    }
+    svg path {
+      transition: fill 0.2s ease;
+    }
+    svg path:hover {
+      fill: #ffa726;
+    }
+    .tooltip {
+      position: absolute;
+      background-color: #333;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 14px;
+      pointer-events: none;
+      display: none;
+    }
+  </style>
 </head>
 <body>
-  <h1>Harta Beta – Proprietăți pe județe</h1>
-
-  <div id="mapContainer">
-    <div id="romaniaMap"></div>
+  <div class="map-container">
+    <object id="svgMap" type="image/svg+xml" data="ro.svg"></object>
   </div>
+  <div class="tooltip" id="tooltip"></div>
 
-  <!-- Modal -->
-  <div id="popup" class="hidden">
-    <div id="popupContent">
-      <button id="closePopup">×</button>
-      <h2 id="countyName"></h2>
-      <div id="propertiesList">
-        <h3>Proprietăți existente:</h3>
-        <ul id="list"></ul>
-      </div>
-      <div id="addProperty">
-        <h3>Adaugă proprietate nouă:</h3>
-        <form id="propertyForm">
-          <label>Titlu:
-            <input type="text" id="propTitle" required />
-          </label><br />
-          <label>Descriere:
-            <textarea id="propDesc" required></textarea>
-          </label><br />
-          <button type="submit">Adaugă</button>
-        </form>
-      </div>
-    </div>
-  </div>
+  <script>
+    const tooltip = document.getElementById('tooltip');
 
-  <script src="script.js"></script>
+    const svgObject = document.getElementById('svgMap');
+    svgObject.addEventListener('load', () => {
+      const svgDoc = svgObject.contentDocument;
+      const paths = svgDoc.querySelectorAll('path');
+
+      paths.forEach(path => {
+        path.addEventListener('mouseenter', (e) => {
+          const abbr = path.getAttribute('id') || 'N/A';
+          tooltip.innerText = abbr;
+          tooltip.style.display = 'block';
+        });
+        path.addEventListener('mousemove', (e) => {
+          tooltip.style.top = (e.clientY + 10) + 'px';
+          tooltip.style.left = (e.clientX + 10) + 'px';
+        });
+        path.addEventListener('mouseleave', () => {
+          tooltip.style.display = 'none';
+        });
+      });
+    });
+
+    // Zoom & Pan with Wheel + Drag
+    const container = document.querySelector('.map-container');
+    let scale = 1;
+    let posX = 0;
+    let posY = 0;
+    let isDragging = false;
+    let start = {};
+
+    container.addEventListener('wheel', e => {
+      e.preventDefault();
+      scale += e.deltaY * -0.001;
+      scale = Math.min(Math.max(.5, scale), 3);
+      svgObject.style.transform = `scale(${scale}) translate(${posX}px, ${posY}px)`;
+    });
+
+    container.addEventListener('mousedown', e => {
+      isDragging = true;
+      start = { x: e.clientX, y: e.clientY };
+      container.style.cursor = 'grabbing';
+    });
+
+    container.addEventListener('mousemove', e => {
+      if (!isDragging) return;
+      const dx = (e.clientX - start.x) / scale;
+      const dy = (e.clientY - start.y) / scale;
+      posX += dx;
+      posY += dy;
+      svgObject.style.transform = `scale(${scale}) translate(${posX}px, ${posY}px)`;
+      start = { x: e.clientX, y: e.clientY };
+    });
+
+    container.addEventListener('mouseup', () => {
+      isDragging = false;
+      container.style.cursor = 'grab';
+    });
+
+    container.addEventListener('mouseleave', () => {
+      isDragging = false;
+      container.style.cursor = 'grab';
+    });
+  </script>
 </body>
 </html>
