@@ -10,16 +10,10 @@
   <h1>Harta Beta – Proprietăți pe județe</h1>
 
   <div id="mapContainer">
-    <!-- Vom încărca SVG-ul aici -->
     <div id="romaniaMap"></div>
   </div>
-<!-- Adaugă în <body>, sub <div id="mapContainer"> -->
-<div id="controls">
-  <button id="zoomIn">➕ Zoom In</button>
-  <button id="zoomOut">➖ Zoom Out</button>
-</div>
 
-  <!-- Pop-up -->
+  <!-- Modal -->
   <div id="popup" class="hidden">
     <div id="popupContent">
       <button id="closePopup">×</button>
@@ -31,12 +25,10 @@
       <div id="addProperty">
         <h3>Adaugă proprietate nouă:</h3>
         <form id="propertyForm">
-          <label>
-            Titlu:
+          <label>Titlu:
             <input type="text" id="propTitle" required />
           </label><br />
-          <label>
-            Descriere:
+          <label>Descriere:
             <textarea id="propDesc" required></textarea>
           </label><br />
           <button type="submit">Adaugă</button>
