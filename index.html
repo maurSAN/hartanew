@@ -1,25 +1,20 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-  <meta charset="UTF‑8">
-  <meta name="viewport" content="width=device‑width, initial-scale=1.0">
-  <title>Harta Beta</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Harta Beta – Proprietăţi pe judeţe</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <h1>Harta Beta – Proprietăţi pe judeţe</h1>
+
   <div id="mapContainer">
-    <!-- Hartă România SVG (complete) -->
-    <svg id="romaniaMap" viewBox="0 0 1000 800">
-      <!-- HARTA COMPLETĂ AICI -->
-      <!-- Exemplu: -->
-      <!-- <path id="AB" class="county" d="…" data‑name="Alba"></path> -->
-      <!-- <path id="AR" class="county" d="…" data‑name="Arad"></path> -->
-      <!-- … toate celelalte judeţe … -->
-    </svg>
+    <!-- Include harta prin obiect extern -->
+    <object id="romaniaMap" type="image/svg+xml" data="ro.svg" width="100%" height="auto"></object>
   </div>
 
-  <!-- Modal / pop‑up pentru judeţ -->
+  <!-- Pop‑up/modal pentru judeţ -->
   <div id="popup" class="hidden">
     <div id="popupContent">
       <button id="closePopup">×</button>
@@ -31,12 +26,10 @@
       <div id="addProperty">
         <h3>Adaugă proprietate nouă:</h3>
         <form id="propertyForm">
-          <label>
-            Titlu:
+          <label>Titlu:
             <input type="text" id="propTitle" required>
           </label><br>
-          <label>
-            Descriere:
+          <label>Descriere:
             <textarea id="propDesc" required></textarea>
           </label><br>
           <button type="submit">Adaugă</button>
