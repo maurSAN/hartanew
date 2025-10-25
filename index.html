@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF‑8">
+  <meta name="viewport" content="width=device‑width, initial-scale=1.0">
+  <title>Harta Beta</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Harta Beta – Proprietăţi pe judeţe</h1>
+  <div id="mapContainer">
+    <!-- Hartă România SVG (judete) -->
+    <svg id="romaniaMap" viewBox="0 0 1000 800">
+      <!-- Exemplu: două judeţe, extinde cu toate judeţele după ce ai SVG complet -->
+      <path id="AB" class="county" d="M100,100 L200,100 L200,200 L100,200 Z" data‑name="Alba"></path>
+      <path id="CJ" class="county" d="M220,100 L320,100 L320,200 L220,200 Z" data‑name="Cluj"></path>
+      <!-- … restul judeţelor … -->
+    </svg>
+  </div>
+
+  <!-- Modal / pop‑up pentru judeţ -->
+  <div id="popup" class="hidden">
+    <div id="popupContent">
+      <button id="closePopup">×</button>
+      <h2 id="countyName"></h2>
+      <div id="propertiesList">
+        <h3>Proprietăţi existente:</h3>
+        <ul id="list"></ul>
+      </div>
+      <div id="addProperty">
+        <h3>Adaugă proprietate nouă:</h3>
+        <form id="propertyForm">
+          <label>
+            Titlu:
+            <input type="text" id="propTitle" required>
+          </label><br>
+          <label>
+            Descriere:
+            <textarea id="propDesc" required></textarea>
+          </label><br>
+          <button type="submit">Adaugă</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
