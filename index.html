@@ -1,116 +1,62 @@
-<!DOCTYPE html>
-<html lang="ro">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Harta Beta</title>
-  <style>
-    body {
-      margin: 0;
-      background-color: #f8f9fa;
-      font-family: Arial, sans-serif;
-    }
-    .map-container {
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    svg {
-      width: 90%;
-      height: auto;
-      cursor: grab;
-    }
-    svg path {
-      transition: fill 0.2s ease;
-    }
-    svg path:hover {
-      fill: #ffa726;
-    }
-    .tooltip {
-      position: absolute;
-      background-color: #333;
-      color: white;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 14px;
-      pointer-events: none;
-      display: none;
-    }
-  </style>
-</head>
-<body>
-  <div class="map-container">
-    <object id="svgMap" type="image/svg+xml" data="ro.svg"></object>
-  </div>
-  <div class="tooltip" id="tooltip"></div>
+<script>
+  const svgObject = document.getElementById('svgMap');
+  let scale = 1;
+  let posX = 0;
+  let posY = 0;
+  let isDragging = false;
+  let start = {};
 
-  <script>
-    const tooltip = document.getElementById('tooltip');
+  svgObject.addEventListener('load', () => {
+    const svgDoc = svgObject.contentDocument;
+    const svg = svgDoc.querySelector('svg');
+    const paths = svg.querySelectorAll('path');
 
-    const svgObject = document.getElementById('svgMap');
-    svgObject.addEventListener('load', () => {
-      const svgDoc = svgObject.contentDocument;
-      const paths = svgDoc.querySelectorAll('path');
+    svg.style.transition = 'transform 0.1s ease';
 
-      paths.forEach(path => {
-        path.addEventListener('mouseenter', (e) => {
-          const abbr = path.getAttribute('id') || 'N/A';
-          tooltip.innerText = abbr;
-          tooltip.style.display = 'block';
-        });
-        path.addEventListener('mousemove', (e) => {
-          tooltip.style.top = (e.clientY + 10) + 'px';
-          tooltip.style.left = (e.clientX + 10) + 'px';
-        });
-        path.addEventListener('mouseleave', () => {
-          tooltip.style.display = 'none';
-        });
-      });
+    // Hover color change
+    paths.forEach(p => {
+      p.style.fill = '#cfcfcf';
+      p.addEventListener('mouseenter', () => p.style.fill = '#4faaf5');
+      p.addEventListener('mouseleave', () => p.style.fill = '#cfcfcf');
     });
 
-    // Zoom & Pan with Wheel + Drag
-    const container = document.querySelector('.map-container');
-    let scale = 1;
-    let posX = 0;
-    let posY = 0;
-    let isDragging = false;
-    let start = {};
-
-    container.addEventListener('wheel', e => {
+    // ZOOM on wheel
+    svg.addEventListener('wheel', e => {
       e.preventDefault();
-      scale += e.deltaY * -0.001;
-      scale = Math.min(Math.max(.5, scale), 3);
-      svgObject.style.transform = `scale(${scale}) translate(${posX}px, ${posY}px)`;
+      const delta = e.deltaY < 0 ? 0.1 : -0.1;
+      scale = Math.min(Math.max(0.5, scale + delta), 4);
+      updateTransform();
     });
 
-    container.addEventListener('mousedown', e => {
+    // PAN (drag anywhere)
+    svg.addEventListener('mousedown', e => {
       isDragging = true;
-      start = { x: e.clientX, y: e.clientY };
-      container.style.cursor = 'grabbing';
+      start = { x: e.clientX - posX, y: e.clientY - posY };
+      svg.style.cursor = 'grabbing';
     });
 
-    container.addEventListener('mousemove', e => {
+    svg.addEventListener('mousemove', e => {
       if (!isDragging) return;
-      const dx = (e.clientX - start.x) / scale;
-      const dy = (e.clientY - start.y) / scale;
-      posX += dx;
-      posY += dy;
-      svgObject.style.transform = `scale(${scale}) translate(${posX}px, ${posY}px)`;
-      start = { x: e.clientX, y: e.clientY };
+      posX = e.clientX - start.x;
+      posY = e.clientY - start.y;
+      updateTransform();
     });
 
-    container.addEventListener('mouseup', () => {
+    svg.addEventListener('mouseup', () => {
       isDragging = false;
-      container.style.cursor = 'grab';
+      svg.style.cursor = 'grab';
     });
 
-    container.addEventListener('mouseleave', () => {
+    svg.addEventListener('mouseleave', () => {
       isDragging = false;
-      container.style.cursor = 'grab';
+      svg.style.cursor = 'grab';
     });
-  </script>
-</body>
-</html>
+
+    function updateTransform() {
+      svg.setAttribute('transform', `translate(${posX}, ${posY}) scale(${scale})`);
+    }
+
+    // Inițializează pan și zoom
+    updateTransform();
+  });
+</script>
