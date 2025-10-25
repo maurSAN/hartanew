@@ -1,35 +1,45 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-  <meta charset="UTF-8">
-  <title>Harta Beta – Județe România</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-    }
-    h1 {
-      margin: 20px 0;
-    }
-    #map {
-      width: 100%;
-      max-width: 1000px;
-      height: auto;
-      margin: 0 auto;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Harta Beta – Proprietăți pe județe</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
   <h1>Harta Beta – Proprietăți pe județe</h1>
-  <div id="map"></div>
 
-  <!-- Include SimpleMaps JS files -->
-  <script src="mapdata.js"></script>
-  <script src="map.js"></script>
+  <div id="mapContainer">
+    <!-- Vom încărca SVG-ul aici -->
+    <div id="romaniaMap"></div>
+  </div>
 
+  <!-- Pop-up -->
+  <div id="popup" class="hidden">
+    <div id="popupContent">
+      <button id="closePopup">×</button>
+      <h2 id="countyName"></h2>
+      <div id="propertiesList">
+        <h3>Proprietăți existente:</h3>
+        <ul id="list"></ul>
+      </div>
+      <div id="addProperty">
+        <h3>Adaugă proprietate nouă:</h3>
+        <form id="propertyForm">
+          <label>
+            Titlu:
+            <input type="text" id="propTitle" required />
+          </label><br />
+          <label>
+            Descriere:
+            <textarea id="propDesc" required></textarea>
+          </label><br />
+          <button type="submit">Adaugă</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
