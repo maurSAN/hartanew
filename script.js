@@ -1,57 +1,44 @@
-document.addEventListener('DOMContentLoaded', async () => {
-  const svgContainer = document.getElementById('romaniaMap');
-  const popup = document.getElementById('popup');
-  const closePopup = document.getElementById('closePopup');
-  const countyName = document.getElementById('countyName');
-  const list = document.getElementById('list');
-  const form = document.getElementById('propertyForm');
-  const propTitle = document.getElementById('propTitle');
-  const propDesc = document.getElementById('propDesc');
+// Zoom & Pan pe harta SVG
+let zoomLevel = 1;
+let panX = 0;
+let panY = 0;
+let isDragging = false;
+let startX, startY;
 
-  let currentCountyId = null;
+const updateTransform = () => {
+  svg.setAttribute('transform', `translate(${panX}, ${panY}) scale(${zoomLevel})`);
+};
 
-  // Încarcă SVG
-  const res = await fetch('ro.svg');
-  const svgText = await res.text();
-  svgContainer.innerHTML = svgText;
+// Creează un <g> în care punem tot conținutul SVG
+const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+while (svg.firstChild) {
+  group.appendChild(svg.firstChild);
+}
+svg.appendChild(group);
 
-  const counties = svgContainer.querySelectorAll('path');
-
-  counties.forEach(county => {
-    county.addEventListener('click', () => {
-      currentCountyId = county.id;
-      countyName.textContent = county.getAttribute('title') || county.id;
-      loadProperties(currentCountyId);
-      popup.classList.remove('hidden');
-    });
-  });
-
-  closePopup.addEventListener('click', () => {
-    popup.classList.add('hidden');
-  });
-
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    const key = `props_${currentCountyId}`;
-    const props = JSON.parse(localStorage.getItem(key) || '[]');
-    props.push({ title: propTitle.value, desc: propDesc.value });
-    localStorage.setItem(key, JSON.stringify(props));
-    propTitle.value = '';
-    propDesc.value = '';
-    loadProperties(currentCountyId);
-  });
-
-  function loadProperties(id) {
-    const props = JSON.parse(localStorage.getItem(`props_${id}`) || '[]');
-    list.innerHTML = '';
-    if (props.length === 0) {
-      list.innerHTML = '<li>Nu există proprietăți.</li>';
-    } else {
-      props.forEach(p => {
-        const li = document.createElement('li');
-        li.textContent = `${p.title}: ${p.desc}`;
-        list.appendChild(li);
-      });
-    }
-  }
+// Aplică zoom cu rotița
+svg.addEventListener("wheel", e => {
+  e.preventDefault();
+  const scaleAmount = 0.1;
+  const oldZoom = zoomLevel;
+  zoomLevel += e.deltaY < 0 ? scaleAmount : -scaleAmount;
+  zoomLevel = Math.min(Math.max(zoomLevel, 0.3), 10);
+  updateTransform();
 });
+
+// Drag cu mouse
+svg.addEventListener("mousedown", e => {
+  isDragging = true;
+  startX = e.clientX - panX;
+  startY = e.clientY - panY;
+});
+
+svg.addEventListener("mousemove", e => {
+  if (!isDragging) return;
+  panX = e.clientX - startX;
+  panY = e.clientY - startY;
+  updateTransform();
+});
+
+svg.addEventListener("mouseup", () => isDragging = false);
+svg.addEventListener("mouseleave", () => isDragging = false);
